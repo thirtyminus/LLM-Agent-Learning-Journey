@@ -1,0 +1,8 @@
+# phase1-prompt-engineering 依赖
+# 选择你使用的提供商，安装对应 SDK 即可
+
+# OpenAI API（也兼容 Azure OpenAI 及众多国内服务商）
+openai>=1.0.0
+
+# Anthropic API
+anthropic>=0.30.0

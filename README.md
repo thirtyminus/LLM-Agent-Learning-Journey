@@ -49,13 +49,40 @@
 - **LLM API 密钥**（如 OpenAI、Anthropic 等）
 - **（阶段五）** 可选的 GPU 环境用于推理优化实验
 
-### 安装依赖
+### 虚拟环境与依赖安装
+
+本项目分六个阶段推进，各阶段依赖可能不同。建议**每个阶段单独创建虚拟环境**，互不污染。
 
 ```bash
-pip install -r requirements.txt
+# 进入目标阶段
+cd phase1-prompt-engineering
+
+# 创建虚拟环境
+python3 -m venv .venv
+
+# 激活
+source .venv/bin/activate  # macOS / Linux
+# .venv\Scripts\activate   # Windows
+
+# 安装该阶段依赖
+pip install -r playground/requirements.txt
 ```
 
-> 每个阶段的代码目录下也可能有独立的依赖说明，请进入对应文件夹查看。
+> **国内加速：** 如果直接 `pip install` 速度慢，可选用以下方式之一：
+>
+> **方式一：镜像源（推荐）**
+> ```bash
+> # 永久配置（一次生效）
+> pip config set global.index-url https://pypi.tuna.tsinghua.edu.cn/simple
+>
+> # 或单次使用
+> pip install -r playground/requirements.txt -i https://pypi.tuna.tsinghua.edu.cn/simple
+> ```
+>
+> **方式二：代理**
+> ```bash
+> pip install --proxy http://127.0.0.1:7890 -r playground/requirements.txt
+> ```
 
 ### 仓库结构
 
