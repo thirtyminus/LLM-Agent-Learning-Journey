@@ -43,6 +43,13 @@
 
 ## 🚀 快速开始
 
+### 获取仓库
+
+```bash
+git clone https://github.com/thirtyminus/LLM-Agent-Learning-Journey.git
+cd LLM-Agent-Learning-Journey
+```
+
 ### 环境要求
 
 - **Python** 3.10+
