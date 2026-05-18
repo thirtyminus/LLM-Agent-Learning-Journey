@@ -1,0 +1,2 @@
+# ReAct Agent 依赖
+openai>=1.0.0
