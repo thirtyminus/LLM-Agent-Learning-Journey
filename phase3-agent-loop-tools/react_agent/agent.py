@@ -159,9 +159,6 @@ class ReActAgent:
         """
         self.messages.append({"role": "user", "content": user_input})
 
-        # 按工具累计错误次数，不限连续
-        tool_errors: dict[str, int] = {}
-        MAX_TOOL_ERRORS = 2
         ERROR_KEYWORDS = ["错误", "未收录", "未找到", "失败", "未知"]
 
         for step in range(1, self.max_steps + 1):
@@ -200,24 +197,22 @@ class ReActAgent:
                 except Exception as e:
                     result = f"工具调用失败：{e}"
 
-            # 错误检测：同一个工具累计报错 MAX_TOOL_ERRORS 次 → 终止
+            # 工具调用报错 → 立即终止
             is_error = any(kw in result for kw in ERROR_KEYWORDS)
-            if is_error and action:
-                tool_errors[action] = tool_errors.get(action, 0) + 1
-                if tool_errors[action] >= MAX_TOOL_ERRORS:
-                    msg = f"抱歉，多次尝试后仍无法完成：{result}"
-                    if verbose:
-                        print(f"\n❌ {msg}")
-                    self.messages.append({"role": "assistant", "content": response})
-                    self.messages.append({
-                        "role": "system",
-                        "content": f"Observation: {result}",
-                    })
-                    self.messages.append({
-                        "role": "assistant",
-                        "content": f"Final Answer: {msg}",
-                    })
-                    return msg
+            if is_error:
+                msg = f"抱歉，无法完成请求：{result}"
+                if verbose:
+                    print(f"\n❌ {msg}")
+                self.messages.append({"role": "assistant", "content": response})
+                self.messages.append({
+                    "role": "system",
+                    "content": f"Observation: {result}",
+                })
+                self.messages.append({
+                    "role": "assistant",
+                    "content": f"Final Answer: {msg}",
+                })
+                return msg
 
             # 将模型的思考和工具结果加入上下文
             self.messages.append({"role": "assistant", "content": response})
