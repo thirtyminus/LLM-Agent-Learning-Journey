@@ -123,14 +123,20 @@ class Calculator(BaseTool):
 ```python
 class GetWeather(BaseTool):
     name = "get_weather"
-    description = "查询指定城市的当前天气。输入城市名称。"
+    description = "查询指定城市的实时天气。输入城市名称（如 北京），返回温度、天气状况。"
 
     def run(self, city: str) -> str:
         data = {
-            "北京": "15°C，晴，空气质量：良",
-            "上海": "20°C，多云，空气质量：优",
+            "北京": "15°C，晴，风力3级，空气质量：良",
+            "上海": "22°C，多云，风力2级，空气质量：优",
+            "广州": "28°C，多云，风力3级，空气质量：良",
+            "深圳": "26°C，阵雨，风力4级，空气质量：优",
+            "杭州": "18°C，阴，风力2级，空气质量：良",
+            "成都": "20°C，多云，风力1级，空气质量：良",
+            "武汉": "25°C，多云转阴，风力3级，空气质量：良",
+            "南京": "19°C，小雨，风力2级，空气质量：优",
         }
-        return data.get(city, f"未找到 {city} 的天气数据")
+        return data.get(city, f"暂未收录 {city} 的天气数据")
 ```
 
 ### 搜索工具（模拟）
@@ -197,6 +203,13 @@ pip install -r react_agent/requirements.txt
 # 交互式 Agent
 python3 -m react_agent.agent
 ```
+
+![Agent 运行界面](./images/001.png)
+![Agent 运行效果](./images/002.png)
+
+### 错误处理
+
+当 Agent 调用的工具返回错误时（如查询了一个不在数据库中的城市），错误信息会作为 Observation 写入上下文，LLM 自主决定是重试、换工具还是放弃。`max_steps=5` 作为兜底，防止无限循环。
 
 ---
 
