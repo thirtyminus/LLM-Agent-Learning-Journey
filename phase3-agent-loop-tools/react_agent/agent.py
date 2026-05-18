@@ -159,6 +159,10 @@ class ReActAgent:
         """
         self.messages.append({"role": "user", "content": user_input})
 
+        last_action = None
+        error_count = 0
+        ERROR_KEYWORDS = ["错误", "未收录", "未找到", "失败", "未知"]
+
         for step in range(1, self.max_steps + 1):
             if verbose:
                 print(f"\n[Step {step}] 调用 LLM...")
@@ -194,6 +198,29 @@ class ReActAgent:
                         print(f"  📦 工具结果: {result[:100]}...")
                 except Exception as e:
                     result = f"工具调用失败：{e}"
+
+            # 错误检测：同一工具连续出错 → 直接终止
+            is_error = any(kw in result for kw in ERROR_KEYWORDS)
+            if is_error and action == last_action:
+                error_count += 1
+                if error_count >= 2:
+                    msg = f"抱歉，多次尝试后仍无法完成：{result}"
+                    if verbose:
+                        print(f"\n❌ {msg}")
+                    self.messages.append({"role": "assistant", "content": response})
+                    self.messages.append({
+                        "role": "system",
+                        "content": f"Observation: {result}",
+                    })
+                    # 把最终答复写入历史后返回
+                    self.messages.append({
+                        "role": "assistant",
+                        "content": f"Final Answer: {msg}",
+                    })
+                    return msg
+            else:
+                error_count = 0
+            last_action = action
 
             # 将模型的思考和工具结果加入上下文
             self.messages.append({"role": "assistant", "content": response})
