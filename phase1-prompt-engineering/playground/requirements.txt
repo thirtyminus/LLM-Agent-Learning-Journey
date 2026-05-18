@@ -6,3 +6,6 @@ openai>=1.0.0
 
 # Anthropic API
 anthropic>=0.30.0
+
+# 交互式输入（多行编辑、Alt+Enter 发送）
+prompt_toolkit>=3.0.0

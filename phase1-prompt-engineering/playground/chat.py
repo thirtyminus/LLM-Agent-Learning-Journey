@@ -35,6 +35,9 @@ import os
 import sys
 from pathlib import Path
 
+from prompt_toolkit import PromptSession
+from prompt_toolkit.key_binding import KeyBindings
+
 # ============================================================
 # 提供商适配器
 # ============================================================
@@ -224,13 +227,23 @@ class Conversation:
 # 渲染器
 # ============================================================
 
+def read_multiline(prompt=">>> "):
+    """多行输入，Alt+Enter 发送，Enter 换行。"""
+    kb = KeyBindings()
+    @kb.add("escape", "enter")
+    def _(event):
+        event.current_buffer.validate_and_handle()
+    session = PromptSession(key_bindings=kb, multiline=True)
+    return session.prompt(prompt)
+
+
 def print_header():
     """打印启动 banner"""
     print("=" * 60)
     print("  🧪 LLM Playground — 交互式聊天")
-    print("  输入消息开始对话。支持多行输入：")
-    print("  回车换行，空行（连续按两次回车）发送")
-    print("  输入以下命令进行操作：")
+    print("  Enter 换行，Alt+Enter 发送")
+    print()
+    print("  命令：")
     print("    /clear   — 清空对话历史")
     print("    /save    — 保存当前对话")
     print("    /load    — 加载历史对话")
@@ -346,48 +359,42 @@ def main():
 
     # ==================== 交互循环 ====================
     while True:
-        # --- 多行输入：空行结束，命令取第一行 ---
         try:
-            lines = []
-            first = input(">>> ").strip()
-            # 命令处理（仅检查第一行）
-            if first == "/exit":
-                print("👋 再见！")
-                break
-            elif first == "/clear":
-                conv = Conversation(system_prompt=system_prompt)
-                print("🧹 对话已清空")
-                continue
-            elif first == "/save":
-                path = input("  保存路径（默认: chat_history.json）: ").strip()
-                conv.save(path or "chat_history.json")
-                continue
-            elif first == "/load":
-                path = input("  加载路径（默认: chat_history.json）: ").strip()
-                if Path(path or "chat_history.json").exists():
-                    conv.load(path or "chat_history.json")
-                else:
-                    print(f"⚠️  文件不存在：{path}")
-                continue
-            elif first == "/info":
-                print_info(args.provider, model, args.temperature, args.top_p,
-                           args.max_tokens, system_prompt)
-                continue
-            elif not first:
-                continue
-
-            lines.append(first)
-            # 继续读后续行，空行结束
-            while True:
-                line = input("... ").rstrip("\n")
-                if not line:
-                    break
-                lines.append(line)
-
-            user_input = "\n".join(lines)
-        except (EOFError, KeyboardInterrupt):
+            raw = read_multiline()
+        except (KeyboardInterrupt):
             print("\n👋 再见！")
             break
+
+        text = raw.strip()
+        first_line = text.split("\n")[0].strip() if text else ""
+
+        # --- 命令处理 ---
+        if first_line == "/exit":
+            print("👋 再见！")
+            break
+        elif first_line == "/clear":
+            conv = Conversation(system_prompt=system_prompt)
+            print("🧹 对话已清空")
+            continue
+        elif first_line == "/save":
+            path = input("  保存路径（默认: chat_history.json）: ").strip()
+            conv.save(path or "chat_history.json")
+            continue
+        elif first_line == "/load":
+            path = input("  加载路径（默认: chat_history.json）: ").strip()
+            if Path(path or "chat_history.json").exists():
+                conv.load(path or "chat_history.json")
+            else:
+                print(f"⚠️  文件不存在：{path}")
+            continue
+        elif first_line == "/info":
+            print_info(args.provider, model, args.temperature, args.top_p,
+                       args.max_tokens, system_prompt)
+            continue
+        elif not text:
+            continue
+
+        user_input = text
 
         # --- 发送消息 ---
         conv.add_user_message(user_input)
