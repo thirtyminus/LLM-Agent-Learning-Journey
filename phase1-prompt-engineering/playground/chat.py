@@ -228,11 +228,27 @@ class Conversation:
 # ============================================================
 
 def read_multiline(prompt=">>> "):
-    """多行输入，Alt+Enter 发送，Enter 换行。"""
+    """多行输入。普通消息 Enter 换行，Alt+Enter 发送，/ 开头的命令按 Enter 直接执行。"""
     kb = KeyBindings()
+
     @kb.add("escape", "enter")
     def _(event):
         event.current_buffer.validate_and_handle()
+
+    @kb.add("enter")
+    def _enter(event):
+        buffer = event.current_buffer
+        # 第一行以 / 开头 → 直接提交（命令）
+        for line in buffer.text.split("\n"):
+            stripped = line.strip()
+            if stripped:
+                if stripped.startswith("/"):
+                    buffer.validate_and_handle()
+                    return
+                break  # 第一行是普通内容，退出判断
+        # 否则换行
+        buffer.insert_text("\n")
+
     session = PromptSession(key_bindings=kb, multiline=True)
     return session.prompt(prompt)
 
@@ -241,7 +257,8 @@ def print_header():
     """打印启动 banner"""
     print("=" * 60)
     print("  🧪 LLM Playground — 交互式聊天")
-    print("  Enter 换行，Option+Enter (mac) / Alt+Enter (win/linux) 发送")
+    print("  Enter 换行，/ 开头的命令按 Enter 直接执行")
+    print("  Option+Enter (mac) / Alt+Enter (win/linux) 发送普通消息")
     print()
     print("  命令：")
     print("    /clear   — 清空对话历史")
