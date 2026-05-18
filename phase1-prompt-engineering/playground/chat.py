@@ -241,7 +241,7 @@ def print_header():
     """打印启动 banner"""
     print("=" * 60)
     print("  🧪 LLM Playground — 交互式聊天")
-    print("  Enter 换行，Alt+Enter 发送")
+    print("  Enter 换行，Option+Enter (mac) / Alt+Enter (win/linux) 发送")
     print()
     print("  命令：")
     print("    /clear   — 清空对话历史")
