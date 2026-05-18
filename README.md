@@ -4,7 +4,9 @@
 > 涵盖 Prompt Engineering、Context Engineering、Harness Engineering 等核心课题
 
 <p align="center">
-  <code>Python 3.10+</code> · <code>进行中</code> · <code>MIT License</code>
+  <img src="https://img.shields.io/badge/Python-3.10%2B-blue" alt="Python 3.10+">
+  <img src="https://img.shields.io/badge/status-进行中-yellow" alt="Status">
+  <img src="https://img.shields.io/badge/license-MIT-green" alt="License">
 </p>
 
 ---
