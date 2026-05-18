@@ -218,3 +218,7 @@ python3 chat.py --system "你是一名资深的技术面试官..."
 # 或从文件加载
 python3 chat.py --system-file prompts/prompt_templates.md
 ```
+
+![面试官角色运行效果](../images/002.png)
+
+![面试官角色运行效果](../images/003.png)
