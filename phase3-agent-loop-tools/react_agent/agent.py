@@ -68,7 +68,7 @@ def _mock_llm(messages: list[dict]) -> str:
     # 简单规则匹配
     if "天气" in last_msg or "温度" in last_msg:
         import re as re_mod
-        city_match = re_mod.search(r"北京|上海|深圳|杭州|成都", last_msg)
+        city_match = re_mod.search(r"北京|上海|广州|深圳|杭州|成都|武汉|南京", last_msg)
         city = city_match.group(0) if city_match else "北京"
         return (
             f"Thought: 用户想查询 {city} 的天气，我需要调用 get_weather 工具。\n"
