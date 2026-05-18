@@ -222,7 +222,7 @@ def interactive():
     print("  输入 /reset 重置对话，/exit 退出")
     print("=" * 60)
 
-    agent = ReActAgent(verbose=True)
+    agent = ReActAgent()
 
     while True:
         try:
