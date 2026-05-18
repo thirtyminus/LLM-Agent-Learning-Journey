@@ -122,6 +122,29 @@ python3 playground/chat.py
 
 ![chat.py 运行截图](./images/001.png)
 
+### 常用参数
+
+| 参数 | 说明 | 示例 |
+|------|------|------|
+| `--prompt` | 单次提问，输出后退出（非交互模式） | `--prompt "你好"` |
+| `--system` | 设置 System Prompt | `--system "你是面试官"` |
+| `--system-file` | 从文件加载 System Prompt | `--system-file prompts/templates.md` |
+| `--temperature` | 温度参数 0.0~2.0 | `--temperature 0.2` |
+| `--max-tokens` | 最大输出 token 数 | `--max-tokens 2048` |
+| `--provider` | API 提供商 | `--provider openai` |
+| `--model` | 指定模型 | `--model gpt-4o` |
+
+```bash
+# 常用组合：单次提问 + 角色
+python3 playground/chat.py --system "你是翻译" --prompt "Hello World"
+
+# 低温度 + 单次提问（确定性输出）
+python3 playground/chat.py --temperature 0.2 --prompt "1+1="
+
+# 从模板加载角色 + 提问
+python3 playground/chat.py --system-file prompts/prompt_templates.md --prompt "开始面试"
+```
+
 ---
 
 ## 实践路线
