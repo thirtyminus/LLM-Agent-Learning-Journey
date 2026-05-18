@@ -1,0 +1,8 @@
+# 记忆系统依赖
+# 运行对比实验前安装：pip install -r memory_system/requirements.txt
+
+# 如果用真实 embedding（向量记忆需要），取消下面这行的注释
+# sentence-transformers>=2.2.0
+
+# 如果用 OpenAI embedding（向量记忆需要），取消下面这行的注释
+# openai>=1.0.0
